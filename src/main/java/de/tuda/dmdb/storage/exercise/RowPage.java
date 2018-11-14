@@ -22,8 +22,39 @@ public class RowPage extends AbstractPage {
     // existing records, otherwise an in-place update should occur.
     // Exception is thrown if no space left (same as in insert(AbstractRecord))
     public void insert(int slotNumber, AbstractRecord record, boolean doInsert) {
-        //TODO: implement this method
-        
+        if(!recordFitsIntoPage(record)){
+            throw new RuntimeException("There is no space left");
+        }
+        else{
+            if(doInsert){
+                int toShift = getNumRecords() - slotNumber;
+                System.arraycopy(data, slotNumber*slotSize, data, slotNumber*slotSize + slotSize, toShift*slotSize);
+            }
+                for(int i = 0; i<record.getValues().length; i++){
+                    if(record.getValue(i) instanceof SQLInteger){
+                        byte[] toInsert = record.getValue(i).serialize();
+                        for(int j = 0; j<toInsert.length;j++){
+                            this.data[slotSize*slotNumber] = toInsert[j];
+                        }
+                    }
+                    else {
+                        SQLInteger lengthToInstmp = new SQLInteger(record.getValue(i).getVariableLength());
+                        byte[] lengthToIns = lengthToInstmp.serialize();
+                        SQLInteger blabla = new SQLInteger(offsetEnd);
+                        byte[] blablaByte = blabla.serialize();
+                        for(int j = 0; j<4;j++){
+                            this.data[slotNumber*slotSize+4+j] = lengthToIns[j];
+                            this.data[slotNumber*slotSize+8+j] = blablaByte[j];
+                        }
+                        byte[] dings = record.getValue(i).serialize();
+                        for (int x = record.getValue(i).getVariableLength() - 1; x>=0; x--){
+                            this.data[offsetEnd] = dings[x];
+                            offsetEnd--;
+                        }
+                    }
+
+                }
+        }
     }
 
     @Override
