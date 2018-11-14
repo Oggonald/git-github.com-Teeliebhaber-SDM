@@ -31,14 +31,14 @@ public class SQLVarchar extends SQLVarcharBase {
 	
 	@Override
 	public byte[] serialize() {
-		//TODO: implement this method
-		return null;
+		return this.value.getBytes();
 	}
 
 	@Override
 	public void deserialize(byte[] data) {
 		//TODO: implement this method
-		//this.value = ?
+		String decoded = new String(data);
+		this.value = decoded;
 	}
 	
 	@Override

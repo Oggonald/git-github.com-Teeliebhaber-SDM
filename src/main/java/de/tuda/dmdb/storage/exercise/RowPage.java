@@ -2,6 +2,8 @@ package de.tuda.dmdb.storage.exercise;
 
 import de.tuda.dmdb.storage.AbstractPage;
 import de.tuda.dmdb.storage.AbstractRecord;
+import de.tuda.dmdb.storage.types.exercise.SQLInteger;
+import de.tuda.dmdb.storage.types.exercise.SQLVarchar;
 
 
 public class RowPage extends AbstractPage {
@@ -27,12 +29,35 @@ public class RowPage extends AbstractPage {
 	// otherwise throws an exception
 	public int insert(AbstractRecord record){
 		//TODO: implement this method
-		if(!recordFitsIntoPage(record)){
-		    throw new RuntimeException("This page is full");
-        }else {
+		if(recordFitsIntoPage(record)){
+		    for(int i = 0; i<record.getValues().length; i++){
+		        if(record.getValue(i) instanceof SQLInteger){
+                    byte[] toInsert = record.getValue(i).serialize();
+                    for(int j = 0; j<toInsert.length;j++){
+                        this.data[offset] = toInsert[j];
+                        offset++;
+                    }
+                }
+                else {
+		            SQLInteger lengthToInstmp = new SQLInteger(record.getValue(i).getVariableLength());
+		            byte[] lengthToIns = lengthToInstmp.serialize();
+                    SQLInteger blabla = new SQLInteger(offsetEnd);
+                    byte[] blablaByte = blabla.serialize();
+		            for(int j = 0; j<4;j++){
+		                this.data[offset] = lengthToIns[j];
+		                this.data[offset+4] = blablaByte[j];
+		                offset++;
+                    }
+                    offset += 4;
+                    byte[] dings = record.getValue(i).serialize();
+                    for (int x = record.getValue(i).getVariableLength() - 1; x>=0; x--){
+		                this.data[offsetEnd] = dings[x];
+		                offsetEnd--;
+                    }
+                }
 
-
-            numRecords++;
+            }
+			numRecords++;
 		}
 		return 0;
 	}
