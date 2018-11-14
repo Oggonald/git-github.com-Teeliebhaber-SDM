@@ -29,12 +29,14 @@ public class RowPage extends AbstractPage {
             if(doInsert){
                 int toShift = getNumRecords() - slotNumber;
                 System.arraycopy(data, slotNumber*slotSize, data, slotNumber*slotSize + slotSize, toShift*slotSize);
+                offset += record.getFixedLength();
+                numRecords++;
             }
                 for(int i = 0; i<record.getValues().length; i++){
                     if(record.getValue(i) instanceof SQLInteger){
                         byte[] toInsert = record.getValue(i).serialize();
                         for(int j = 0; j<toInsert.length;j++){
-                            this.data[slotSize*slotNumber] = toInsert[j];
+                            this.data[slotSize*slotNumber+j] = toInsert[j];
                         }
                     }
                     else {
