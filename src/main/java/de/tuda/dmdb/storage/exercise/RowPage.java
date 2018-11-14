@@ -26,6 +26,7 @@ public class RowPage extends AbstractPage {
             throw new RuntimeException("There is no space left");
         }
         else{
+            int writtenBytes = 0;
             if(doInsert){
                 int toShift = getNumRecords() - slotNumber;
                 System.arraycopy(data, slotNumber*slotSize, data, slotNumber*slotSize + slotSize, toShift*slotSize);
@@ -36,8 +37,9 @@ public class RowPage extends AbstractPage {
                     if(record.getValue(i) instanceof SQLInteger){
                         byte[] toInsert = record.getValue(i).serialize();
                         for(int j = 0; j<toInsert.length;j++){
-                            this.data[slotSize*slotNumber+j] = toInsert[j];
+                            this.data[slotSize*slotNumber+j+writtenBytes] = toInsert[j];
                         }
+                        writtenBytes+=SQLInteger.LENGTH;
                     }
                     else {
                         SQLInteger lengthToInstmp = new SQLInteger(record.getValue(i).getVariableLength());
@@ -45,14 +47,15 @@ public class RowPage extends AbstractPage {
                         SQLInteger blabla = new SQLInteger(offsetEnd);
                         byte[] blablaByte = blabla.serialize();
                         for(int j = 0; j<4;j++){
-                            this.data[slotNumber*slotSize+4+j] = lengthToIns[j];
-                            this.data[slotNumber*slotSize+8+j] = blablaByte[j];
+                            this.data[slotNumber*slotSize+j+writtenBytes] = lengthToIns[j];
+                            this.data[slotNumber*slotSize+4+j+writtenBytes] = blablaByte[j];
                         }
                         byte[] dings = record.getValue(i).serialize();
                         for (int x = record.getValue(i).getVariableLength() - 1; x>=0; x--){
                             this.data[offsetEnd] = dings[x];
                             offsetEnd--;
                         }
+                        writtenBytes+=SQLVarchar.LENGTH;
                     }
 
                 }
@@ -93,7 +96,7 @@ public class RowPage extends AbstractPage {
             }
             numRecords++;
         }
-        return 0;
+        return numRecords -1;
     }
 
     @Override
