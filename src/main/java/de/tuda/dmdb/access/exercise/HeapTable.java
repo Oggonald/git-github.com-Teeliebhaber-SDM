@@ -24,15 +24,22 @@ public class HeapTable extends HeapTableBase {
     // Inserts a record in the last Page of the Heap-Table. If no
     // space is left in a page, a new page is created.
     public RecordIdentifier insert(AbstractRecord record) {
-        //TODO: implement this method
+        // Check whether the last page has space for the new record
         if (!this.lastPage.recordFitsIntoPage(record)) {
+            // if not, create a new Page with the
             RowPage newPage = new RowPage(record.getFixedLength());
+            // Set the correct page number to the new page
             newPage.setPageNumber(this.pages.size());
+            // add it to our "DBMS"
             this.addPage(newPage);
+            // reference lastPage to the newly added page
             this.lastPage = newPage;
         }
+        // get relevant data for our Row Identifier
         int slotNum = lastPage.insert(record);
         int pageNum = lastPage.getPageNumber();
+
+        // Setup the RowIdentifier
         RecordIdentifier rid = new RecordIdentifier(pageNum, slotNum);
         return rid;
     }
@@ -40,9 +47,11 @@ public class HeapTable extends HeapTableBase {
     @Override
     // Returns a record by its pageNumber & slotNumber.
     public AbstractRecord lookup(int pageNumber, int slotNumber) {
-        //TODO: implement this method
+        // Get wanted page
         AbstractPage toLookup = this.getPage(pageNumber);
+        //Copy data of prototype to work with
         AbstractRecord prot = prototype.clone();
+        //fill prot with data and return it
         toLookup.read(slotNumber, prot);
         return prot;
     }
