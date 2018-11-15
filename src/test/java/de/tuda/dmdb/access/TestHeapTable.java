@@ -32,4 +32,23 @@ public class TestHeapTable extends TestCase{
 		Assert.assertEquals(record1, record1Cmp);
 		Assert.assertEquals(record2, record2Cmp);
 	}
+    /**
+     * Test if a new page is created after filling the first, should happen after 2973 entries
+     * have been already entered. Entry with one int and one varchar of 10 bytes
+     */
+    public void testNewPageIsCreatedWhenFull() {
+        AbstractRecord record1 = new Record(2);
+        record1.setValue(0, new SQLInteger(1337));
+        record1.setValue(1, new SQLVarchar("1234567890", 10));
+
+        AbstractTable table = new HeapTable(record1.clone());
+        for(int i = 0; i < 2974; i++) {
+            table.insert(record1.clone());
+        }
+        int pageSize = ((HeapTable) table).pages.size();
+        int numRecordsOnLastPage = ((HeapTable) table).lastPage.getNumRecords();
+
+        assertEquals(2, pageSize);
+        assertEquals(1, numRecordsOnLastPage);
+    }
 }
