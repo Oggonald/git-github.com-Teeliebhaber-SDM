@@ -28,7 +28,7 @@ public class SQLInteger extends SQLIntegerBase {
 	
 	@Override
 	public byte[] serialize() {
-		//TODO: implement this method
+		// Shift bytes to serialize
 		byte[] tmp = new byte[4];
 		tmp[0] = (byte) (this.value>>24);
 		tmp[1] = (byte) (this.value>>16);
@@ -39,7 +39,8 @@ public class SQLInteger extends SQLIntegerBase {
 
 	@Override
 	public void deserialize(byte[] data) {
-		//TODO: implement this method
+		// Shift and Apply Bitmask on the serialized
+		// values in order to get the correct Value back
 		int first = data[0];
 		first = first<<24;
 		first = first & 0xff000000;
