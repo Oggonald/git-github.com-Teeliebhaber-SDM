@@ -11,22 +11,23 @@ import de.tuda.dmdb.storage.types.exercise.SQLVarchar;
 
 public class HeapTable extends HeapTableBase {
 
-	/**
-	 * 
-	 * Constructs table from record prototype
-	 * @param prototypeRecord
-	 */
-	public HeapTable(AbstractRecord prototypeRecord) {
-		super(prototypeRecord);
-	}
+    /**
+     * Constructs table from record prototype
+     *
+     * @param prototypeRecord
+     */
+    public HeapTable(AbstractRecord prototypeRecord) {
+        super(prototypeRecord);
+    }
 
-	@Override
-	// Inserts a record in the last Page of the Heap-Table. If no
-	// space is left in a page, a new page is created.
-	public RecordIdentifier insert(AbstractRecord record) {
-		//TODO: implement this method
-        if(!this.lastPage.recordFitsIntoPage(record)){
+    @Override
+    // Inserts a record in the last Page of the Heap-Table. If no
+    // space is left in a page, a new page is created.
+    public RecordIdentifier insert(AbstractRecord record) {
+        //TODO: implement this method
+        if (!this.lastPage.recordFitsIntoPage(record)) {
             RowPage newPage = new RowPage(record.getFixedLength());
+            newPage.setPageNumber(this.pages.size());
             this.addPage(newPage);
             this.lastPage = newPage;
         }
@@ -34,16 +35,16 @@ public class HeapTable extends HeapTableBase {
         int pageNum = lastPage.getPageNumber();
         RecordIdentifier rid = new RecordIdentifier(pageNum, slotNum);
         return rid;
-	}
+    }
 
-	@Override
-	// Returns a record by its pageNumber & slotNumber.
-	public AbstractRecord lookup(int pageNumber, int slotNumber) {
-		//TODO: implement this method
+    @Override
+    // Returns a record by its pageNumber & slotNumber.
+    public AbstractRecord lookup(int pageNumber, int slotNumber) {
+        //TODO: implement this method
         AbstractPage toLookup = this.getPage(pageNumber);
         AbstractRecord prot = prototype.clone();
         toLookup.read(slotNumber, prot);
         return prot;
-	}
+    }
 
 }
