@@ -28,34 +28,13 @@ public class SQLInteger extends SQLIntegerBase {
 	
 	@Override
 	public byte[] serialize() {
-		// Shift bytes to serialize
-		byte[] tmp = new byte[4];
-		tmp[0] = (byte) (this.value>>24);
-		tmp[1] = (byte) (this.value>>16);
-		tmp[2] = (byte) (this.value>>8);
-		tmp[3] = (byte) (this.value);
-		return tmp;
+		//TODO: Insert your own implementation from exercise02
+		return null;
 	}
 
 	@Override
 	public void deserialize(byte[] data) {
-		// Shift and Apply Bitmask on the serialized
-		// values in order to get the correct Value back
-		int first = data[0];
-		first = first<<24;
-		first = first & 0xff000000;
-		int second = data[1];
-		second = second<<16;
-		second = second & 0x00ff0000;
-		int third = data[2];
-		third = third<<8;
-		third = third & 0x0000ff00;
-		int fourth = data[3];
-		fourth = fourth & 0x000000ff;
-		int x1 = first|second;
-		int x2 = third|fourth;
-		int retu = x1|x2;
-		this.value = retu;
+		//TODO: Insert your own implementation from exercise02
 	}
 	
 	

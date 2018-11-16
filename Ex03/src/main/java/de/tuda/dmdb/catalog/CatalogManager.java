@@ -4,10 +4,13 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import de.tuda.dmdb.access.AbstractTable;
+import de.tuda.dmdb.access.AbstractUniqueIndex;
 import de.tuda.dmdb.access.exercise.HeapTable;
+import de.tuda.dmdb.access.exercise.UniqueBPlusTree;
 import de.tuda.dmdb.catalog.objects.Attribute;
 import de.tuda.dmdb.catalog.objects.DataType;
 import de.tuda.dmdb.catalog.objects.DatabaseObject;
+import de.tuda.dmdb.catalog.objects.Index;
 import de.tuda.dmdb.catalog.objects.Table;
 import de.tuda.dmdb.storage.Record;
 
@@ -20,17 +23,19 @@ public class CatalogManager {
 	
 	
 	private static HashMap<Integer, AbstractTable> tables = new HashMap<Integer, AbstractTable>();
-
+	
+	private static HashMap<Integer, AbstractUniqueIndex> uniqueIndexes = new HashMap<Integer, AbstractUniqueIndex>();
 	
 	public static synchronized void clear(){
 		name2oid.clear();
 		oid2obj.clear();
 		tables.clear();
+		uniqueIndexes.clear();
 		LAST_OID = 0;
 	}
 	
 	/**
-	 * creates a new table and registers it in de.tuda.dmdb.catalog
+	 * creates a new table and registers it in catalog
 	 * @param name table name
 	 * @param attributes list of attributes
 	 * @param types list of data types
@@ -57,13 +62,53 @@ public class CatalogManager {
 	/**
 	 * Returns an existing table (if exists, otherwise null is returned)
 	 * @param name
-	 * @return Table from de.tuda.dmdb.catalog
+	 * @return Table from catalog
 	 */
 	public static AbstractTable getTable(String name){
 		Integer oid = getOid(name);
 		return tables.get(oid);
 	}
-
+	
+	/**
+	 * Creates an index an registers it in catalog
+	 * @param indexDesc
+	 * @param tableDesc
+	 * @param attDesc
+	 * @return Unique index which was created
+	 */
+	public static AbstractUniqueIndex createUniqueIndex(Index indexDesc, Table tableDesc, Attribute attDesc){
+		AbstractTable table = getTable(tableDesc.getName());
+		AbstractUniqueIndex index = null;
+	
+		int key = table.getColumnNumber(attDesc.getName());
+		switch(indexDesc.getType()){
+		case BPlusTree:
+			index = new UniqueBPlusTree(table, key);
+			break;
+		}
+		
+		Integer oid = createOid(indexDesc.getName());
+		indexDesc.setOid(oid);
+		uniqueIndexes.put(oid, index);
+		oid2obj.put(oid, indexDesc);
+		
+		//register index at table
+		table.addIndex(attDesc, indexDesc);
+		
+		return index;
+	}
+	
+	/**
+	 * Returns an existing index (if exists, otherwise null is returned)
+	 * @param name
+	 * @return Unique index form catalog
+	 * 
+	 */
+	public static AbstractUniqueIndex getUniqueIndex(String name){
+		Integer oid = getOid(name);
+		return uniqueIndexes.get(oid);
+	}
+	
 	/**
 	 * Returns oid for table or index
 	 * @param name

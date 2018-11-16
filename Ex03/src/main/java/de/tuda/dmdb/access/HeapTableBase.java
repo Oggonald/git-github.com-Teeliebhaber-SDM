@@ -109,7 +109,6 @@ public abstract class HeapTableBase extends AbstractTable {
 	
 	
 	@Override
-	//Returns a record by its RID.
 	public AbstractRecord lookup(RecordIdentifier rid) {
 		return this.lookup(rid.getPageNumber(), rid.getSlotNumber());
 	}

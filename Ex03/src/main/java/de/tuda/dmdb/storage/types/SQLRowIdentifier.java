@@ -101,7 +101,7 @@ public class SQLRowIdentifier extends AbstractSQLValue {
 	public byte[] serialize() {
 		byte[] data = new byte[LENGTH];
 		System.arraycopy(this.page.serialize(), 0, data, 0, SQLInteger.LENGTH);
-		System.arraycopy(this.slot.serialize(), SQLInteger.LENGTH, data, 0, SQLInteger.LENGTH);
+		System.arraycopy(this.slot.serialize(), 0, data, SQLInteger.LENGTH, SQLInteger.LENGTH);
 		return data;
 	}
 

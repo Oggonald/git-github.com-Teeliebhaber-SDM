@@ -8,7 +8,7 @@ public class TestSuiteAccess extends TestSuite
   public static Test suite()
   {
     TestSuite suite = new TestSuite( "DMDB-Access" );
-    suite.addTestSuite( TestHeapTable.class );
+    suite.addTestSuite( TestUniqueBPlusTree.class );
     return suite;
   }
 }
