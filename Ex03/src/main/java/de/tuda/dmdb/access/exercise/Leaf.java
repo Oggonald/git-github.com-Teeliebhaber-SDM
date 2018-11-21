@@ -16,7 +16,7 @@ public class Leaf<T extends AbstractSQLValue> extends LeafBase<T>{
 
 	/**
 	 * Leaf constructor
-	 * @param uniqueBPlusTree TODO
+	 * @param uniqueBPlusTree
 	 */
 	public Leaf(UniqueBPlusTreeBase<T> uniqueBPlusTree){
 		super(uniqueBPlusTree);
@@ -29,7 +29,17 @@ public class Leaf<T extends AbstractSQLValue> extends LeafBase<T>{
 	@Override
 	public AbstractRecord lookup(T key) {
 		//TODO: implement this method
-
+        int pointer = this.binarySearch(key);
+        if(pointer >= this.indexPage.getNumRecords()){
+            return null;
+        }
+        AbstractRecord bla = this.uniqueBPlusTree.getLeafRecPrototype().clone();
+        this.indexPage.read(pointer, bla);
+        if(key.compareTo(bla.getValue(this.uniqueBPlusTree.KEY_POS)) == 0){
+            int pageNumber = ((SQLInteger) bla.getValue(this.uniqueBPlusTree.PAGE_POS)).getValue();
+            int slotNumber = ((SQLInteger) bla.getValue(this.uniqueBPlusTree.SLOT_POS)).getValue();
+            return this.uniqueBPlusTree.getTable().lookup(pageNumber, slotNumber);
+        }
 		return null;
 	}
 
@@ -42,7 +52,22 @@ public class Leaf<T extends AbstractSQLValue> extends LeafBase<T>{
 	public boolean insert(T key, AbstractRecord record){
 		//TODO: implement this method
 		//search for key and return false if existing
-
+        if(lookup(key) == null){
+            return false;
+        }
+        else{
+            RecordIdentifier rid = this.getUniqueBPlusTree().getTable().insert(record);
+            int pointer = this.binarySearch(key, record);
+            AbstractRecord record2 = this.uniqueBPlusTree.getLeafRecPrototype().clone();
+            record2.setValue(0, key);
+            SQLInteger SQLpageNumber = new SQLInteger();
+            SQLpageNumber.setValue(rid.getPageNumber());
+            record2.setValue(1, SQLpageNumber);
+            SQLInteger SQLslotNumber = new SQLInteger();
+            SQLslotNumber.setValue(rid.getSlotNumber());
+            record2.setValue(2, SQLslotNumber);
+            this.indexPage.insert(pointer, record2, true);
+        }
 		return true;
 	}
 	
