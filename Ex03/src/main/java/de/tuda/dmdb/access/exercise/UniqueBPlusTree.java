@@ -4,6 +4,7 @@ import de.tuda.dmdb.access.AbstractTable;
 import de.tuda.dmdb.access.UniqueBPlusTreeBase;
 import de.tuda.dmdb.access.AbstractIndexElement;
 import de.tuda.dmdb.storage.AbstractRecord;
+import de.tuda.dmdb.storage.PageManager;
 import de.tuda.dmdb.storage.types.AbstractSQLValue;
 import de.tuda.dmdb.storage.types.exercise.SQLInteger;
 
@@ -28,7 +29,7 @@ public class UniqueBPlusTree<T extends AbstractSQLValue> extends UniqueBPlusTree
 	/**
 	 * Constructor for B+-tree with default fill grade
 	 * @param table table to be indexed 
-	 * @param keyNumber Number of unique column which should be indexed
+	 * @param keyColumnNumber Number of unique column which should be indexed
 	 */
 	public UniqueBPlusTree(AbstractTable table, int keyColumnNumber) {
 		this(table, keyColumnNumber, DEFAULT_FILL_GRADE);
@@ -42,10 +43,35 @@ public class UniqueBPlusTree<T extends AbstractSQLValue> extends UniqueBPlusTree
 	@Override
 	public boolean insert(AbstractRecord record) {
 		//insert record
-		//T key = (T) record.getValue(this.keyColumnNumber);
-		
 		//TODO: implement this method
-
+        T key = (T) record.getValue(this.keyColumnNumber);
+        if(this.lookup(key) == null){
+            return false;
+        }
+        if(this.getRoot().isFull()){
+            AbstractIndexElement aie1 = this.getRoot().createInstance();
+            AbstractIndexElement aie2 = this.getRoot().createInstance();
+            AbstractIndexElement newRoot = this.getRoot().createInstance();
+            this.getRoot().split(aie1, aie2);
+            newRoot.setIndexPage(PageManager.createDefaultPage(newRoot.getUniqueBPlusTree().getNodeRecPrototype().getFixedLength()));
+            AbstractRecord aie1rec = newRoot.getUniqueBPlusTree().getNodeRecPrototype().clone();
+            aie1rec.setValue(0, aie1.getMaxKey());
+            SQLInteger pageNumber1 = new SQLInteger();
+            pageNumber1.setValue(aie1.getPageNumber());
+            aie1rec.setValue(1, pageNumber1);
+            newRoot.getIndexPage().insert(aie1rec);
+            AbstractRecord aie2rec = newRoot.getUniqueBPlusTree().getNodeRecPrototype().clone();
+            aie2rec.setValue(0, aie2.getMaxKey());
+            SQLInteger pageNumber2 = new SQLInteger();
+            pageNumber2.setValue(aie2.getPageNumber());
+            aie2rec.setValue(1, pageNumber2);
+            newRoot.getIndexPage().insert(aie2rec);
+            this.setRoot(newRoot);
+            this.getRoot().insert(key, record);
+        }
+        else {
+            this.getRoot().insert(key, record);
+        }
 		return true;
 	}
 
@@ -56,7 +82,7 @@ public class UniqueBPlusTree<T extends AbstractSQLValue> extends UniqueBPlusTree
 	@Override
 	public AbstractRecord lookup(T key) {
 		//TODO: implement this method
-		return null;
+		return this.getRoot().lookup(key);
 	}
 
 }
