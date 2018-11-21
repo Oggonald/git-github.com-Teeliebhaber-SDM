@@ -31,15 +31,15 @@ public class SQLVarchar extends SQLVarcharBase {
 	
 	@Override
 	public byte[] serialize() {
-		// self-explaining
-		return this.value.getBytes();
+		//TODO: Insert your own implementation from exercise02
+
+		return null;
 	}
 
 	@Override
 	public void deserialize(byte[] data) {
-		// The String constructor takes byte arrays, so no magic here
-		String decoded = new String(data);
-		this.value = decoded;
+		//TODO: Insert your own implementation from exercise02
+
 	}
 	
 	@Override

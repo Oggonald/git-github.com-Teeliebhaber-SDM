@@ -30,7 +30,7 @@ public abstract class AbstractTable implements Iterable{
 	
 	/**
 	 * Creates a table for a given record prototype which defines 
-	 * @param prototype
+	 * @param prototypeRecord
 	 */
 	public AbstractTable(AbstractRecord prototype) {
 		this.prototype = prototype;

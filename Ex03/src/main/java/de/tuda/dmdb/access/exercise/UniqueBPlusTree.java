@@ -45,13 +45,21 @@ public class UniqueBPlusTree<T extends AbstractSQLValue> extends UniqueBPlusTree
 		//insert record
 		//TODO: implement this method
         T key = (T) record.getValue(this.keyColumnNumber);
+<<<<<<< HEAD
         if(this.lookup(key) != null){
+=======
+        if(this.lookup(key) == null){
+>>>>>>> origin/Ex03
             return false;
         }
         if(this.getRoot().isFull()){
             AbstractIndexElement aie1 = this.getRoot().createInstance();
             AbstractIndexElement aie2 = this.getRoot().createInstance();
+<<<<<<< HEAD
             AbstractIndexElement newRoot = new Node<T>(this.getRoot().getUniqueBPlusTree());
+=======
+            AbstractIndexElement newRoot = this.getRoot().createInstance();
+>>>>>>> origin/Ex03
             this.getRoot().split(aie1, aie2);
             newRoot.setIndexPage(PageManager.createDefaultPage(newRoot.getUniqueBPlusTree().getNodeRecPrototype().getFixedLength()));
             AbstractRecord aie1rec = newRoot.getUniqueBPlusTree().getNodeRecPrototype().clone();

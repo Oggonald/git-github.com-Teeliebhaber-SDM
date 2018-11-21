@@ -51,6 +51,7 @@ public class Node<T extends AbstractSQLValue> extends NodeBase<T>{
 	@Override
 	public boolean insert(T key, AbstractRecord record){
 		//TODO: implement this method
+<<<<<<< HEAD
         if(this.lookup(key) != null){
             return false;
         }
@@ -60,6 +61,14 @@ public class Node<T extends AbstractSQLValue> extends NodeBase<T>{
             int pointer = this.binarySearch(key, penis);
             int pag = ((SQLInteger) penis.getValue(pointer)).getValue();
             AbstractIndexElement pageToIns = this.uniqueBPlusTree.getIndexElement(pag);
+=======
+        if(this.lookup(key) == null){
+            return false;
+        }
+        else {
+            int pointer = this.binarySearch(key, record);
+            AbstractIndexElement pageToIns = this.uniqueBPlusTree.getIndexElement(pointer);
+>>>>>>> origin/Ex03
             if(pageToIns.isFull()){
                 AbstractIndexElement aie1 = pageToIns.createInstance();
                 AbstractIndexElement aie2 = pageToIns.createInstance();
