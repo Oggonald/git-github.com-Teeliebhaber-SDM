@@ -33,11 +33,14 @@ public class Leaf<T extends AbstractSQLValue> extends LeafBase<T>{
         if(pointer >= this.indexPage.getNumRecords()){
             return null;
         }
-        AbstractRecord bla = this.uniqueBPlusTree.getLeafRecPrototype().clone();
-        this.indexPage.read(pointer, bla);
-        if(key.compareTo(bla.getValue(this.uniqueBPlusTree.KEY_POS)) == 0){
-            int pageNumber = ((SQLInteger) bla.getValue(this.uniqueBPlusTree.PAGE_POS)).getValue();
-            int slotNumber = ((SQLInteger) bla.getValue(this.uniqueBPlusTree.SLOT_POS)).getValue();
+        //get a copy of the record to compare the entries to
+        AbstractRecord copy = this.uniqueBPlusTree.getLeafRecPrototype().clone();
+        this.indexPage.read(pointer, copy);
+        //compare the keys
+        if(key.compareTo(copy.getValue(this.uniqueBPlusTree.KEY_POS)) == 0){
+            int pageNumber = ((SQLInteger) copy.getValue(this.uniqueBPlusTree.PAGE_POS)).getValue();
+            int slotNumber = ((SQLInteger) copy.getValue(this.uniqueBPlusTree.SLOT_POS)).getValue();
+            //look up record in table
             return this.uniqueBPlusTree.getTable().lookup(pageNumber, slotNumber);
         }
 		return null;
@@ -50,14 +53,15 @@ public class Leaf<T extends AbstractSQLValue> extends LeafBase<T>{
 	 */
 	@Override
 	public boolean insert(T key, AbstractRecord record){
-		//TODO: implement this method
 		//search for key and return false if existing
         if(lookup(key) != null){
             return false;
         }
         else{
+            //insert record into table, return identifier
             RecordIdentifier rid = this.getUniqueBPlusTree().getTable().insert(record);
             int pointer = this.binarySearch(key);
+            //create a new record, fill it with key, page number and slot number, insert it into the leaf
             AbstractRecord record2 = this.uniqueBPlusTree.getLeafRecPrototype().clone();
             record2.setValue(0, key);
             SQLInteger SQLpageNumber = new SQLInteger();

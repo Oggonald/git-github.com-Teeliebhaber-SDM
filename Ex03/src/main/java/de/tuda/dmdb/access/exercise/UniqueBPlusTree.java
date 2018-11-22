@@ -43,16 +43,19 @@ public class UniqueBPlusTree<T extends AbstractSQLValue> extends UniqueBPlusTree
 	@Override
 	public boolean insert(AbstractRecord record) {
 		//insert record
-		//TODO: implement this method
         T key = (T) record.getValue(this.keyColumnNumber);
+        //no duplicate records
         if(this.lookup(key) != null){
             return false;
         }
         if(this.getRoot().isFull()){
+            //if root is full, split root into two
             AbstractIndexElement aie1 = this.getRoot().createInstance();
             AbstractIndexElement aie2 = this.getRoot().createInstance();
+            //create a new root
             AbstractIndexElement newRoot = new Node<T>(this.getRoot().getUniqueBPlusTree());
             this.getRoot().split(aie1, aie2);
+            //set 2 records for the newly created child nodes/leafs from old root, insert them into new root
             newRoot.setIndexPage(PageManager.createDefaultPage(newRoot.getUniqueBPlusTree().getNodeRecPrototype().getFixedLength()));
             AbstractRecord aie1rec = newRoot.getUniqueBPlusTree().getNodeRecPrototype().clone();
             aie1rec.setValue(0, aie1.getMaxKey());
@@ -66,7 +69,9 @@ public class UniqueBPlusTree<T extends AbstractSQLValue> extends UniqueBPlusTree
             pageNumber2.setValue(aie2.getPageNumber());
             aie2rec.setValue(1, pageNumber2);
             newRoot.getIndexPage().insert(aie2rec);
+            //set root as newRoot
             this.setRoot(newRoot);
+            //call insert on the new root
             this.getRoot().insert(key, record);
         }
         else {
@@ -81,7 +86,7 @@ public class UniqueBPlusTree<T extends AbstractSQLValue> extends UniqueBPlusTree
 	 */
 	@Override
 	public AbstractRecord lookup(T key) {
-		//TODO: implement this method
+		//get root and call lookup on it
 		return this.getRoot().lookup(key);
 	}
 
