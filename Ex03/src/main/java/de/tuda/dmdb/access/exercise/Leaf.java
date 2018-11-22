@@ -52,20 +52,12 @@ public class Leaf<T extends AbstractSQLValue> extends LeafBase<T>{
 	public boolean insert(T key, AbstractRecord record){
 		//TODO: implement this method
 		//search for key and return false if existing
-<<<<<<< HEAD
         if(lookup(key) != null){
-=======
-        if(lookup(key) == null){
->>>>>>> origin/Ex03
             return false;
         }
         else{
             RecordIdentifier rid = this.getUniqueBPlusTree().getTable().insert(record);
-<<<<<<< HEAD
             int pointer = this.binarySearch(key);
-=======
-            int pointer = this.binarySearch(key, record);
->>>>>>> origin/Ex03
             AbstractRecord record2 = this.uniqueBPlusTree.getLeafRecPrototype().clone();
             record2.setValue(0, key);
             SQLInteger SQLpageNumber = new SQLInteger();

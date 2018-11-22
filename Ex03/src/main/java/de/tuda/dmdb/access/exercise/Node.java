@@ -51,7 +51,6 @@ public class Node<T extends AbstractSQLValue> extends NodeBase<T>{
 	@Override
 	public boolean insert(T key, AbstractRecord record){
 		//TODO: implement this method
-<<<<<<< HEAD
         if(this.lookup(key) != null){
             return false;
         }
@@ -59,16 +58,8 @@ public class Node<T extends AbstractSQLValue> extends NodeBase<T>{
 
             AbstractRecord penis = this.getUniqueBPlusTree().getNodeRecPrototype().clone();
             int pointer = this.binarySearch(key, penis);
-            int pag = ((SQLInteger) penis.getValue(pointer)).getValue();
+            int pag = ((SQLInteger) penis.getValue(pointer-1)).getValue();
             AbstractIndexElement pageToIns = this.uniqueBPlusTree.getIndexElement(pag);
-=======
-        if(this.lookup(key) == null){
-            return false;
-        }
-        else {
-            int pointer = this.binarySearch(key, record);
-            AbstractIndexElement pageToIns = this.uniqueBPlusTree.getIndexElement(pointer);
->>>>>>> origin/Ex03
             if(pageToIns.isFull()){
                 AbstractIndexElement aie1 = pageToIns.createInstance();
                 AbstractIndexElement aie2 = pageToIns.createInstance();
@@ -78,22 +69,24 @@ public class Node<T extends AbstractSQLValue> extends NodeBase<T>{
                 SQLInteger pageNumber1 = new SQLInteger();
                 pageNumber1.setValue(aie1.getPageNumber());
                 aie1rec.setValue(1, pageNumber1);
-                this.indexPage.insert(pointer, aie1rec, false);
+                //pointer -1?
+                this.indexPage.insert(pointer -1, aie1rec, false);
                 AbstractRecord aie2rec = this.uniqueBPlusTree.getNodeRecPrototype().clone();
                 aie2rec.setValue(0, aie2.getMaxKey());
                 SQLInteger pageNumber2 = new SQLInteger();
                 pageNumber2.setValue(aie2.getPageNumber());
                 aie2rec.setValue(1, pageNumber2);
-                this.indexPage.insert(pointer + 1, aie2rec, true);
+                //pointer ohne +1?
+                this.indexPage.insert(pointer , aie2rec, true);
                 this.insert(key, record);
             }
             else{
                 pageToIns.insert(key, record);
                 AbstractRecord oldMax = this.uniqueBPlusTree.getNodeRecPrototype().clone();
-                this.getIndexPage().read(pointer, oldMax);
+                this.getIndexPage().read(pointer-1, oldMax);
                 if(pageToIns.getMaxKey().compareTo(oldMax.getValue(0)) > 0){
                     oldMax.setValue(0, pageToIns.getMaxKey());
-                    this.indexPage.insert(pointer, oldMax, false);
+                    this.indexPage.insert(pointer-1, oldMax, false);
                 }
             }
         }
