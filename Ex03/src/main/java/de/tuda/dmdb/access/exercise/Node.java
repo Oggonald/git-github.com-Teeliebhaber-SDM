@@ -57,9 +57,9 @@ public class Node<T extends AbstractSQLValue> extends NodeBase<T>{
         else {
 
             AbstractRecord penis = this.getUniqueBPlusTree().getNodeRecPrototype().clone();
-            int pointer = this.binarySearch(key, penis);
-            int pag = ((SQLInteger) penis.getValue(pointer-1)).getValue();
-            AbstractIndexElement pageToIns = this.uniqueBPlusTree.getIndexElement(pag);
+            int pointer = this.binarySearch(key);
+            this.indexPage.read(pointer, penis);
+            AbstractIndexElement pageToIns = this.uniqueBPlusTree.getIndexElement(((SQLInteger) penis.getValue(1)).getValue());
             if(pageToIns.isFull()){
                 AbstractIndexElement aie1 = pageToIns.createInstance();
                 AbstractIndexElement aie2 = pageToIns.createInstance();
@@ -70,23 +70,23 @@ public class Node<T extends AbstractSQLValue> extends NodeBase<T>{
                 pageNumber1.setValue(aie1.getPageNumber());
                 aie1rec.setValue(1, pageNumber1);
                 //pointer -1?
-                this.indexPage.insert(pointer -1, aie1rec, false);
+                this.indexPage.insert(pointer, aie1rec, false);
                 AbstractRecord aie2rec = this.uniqueBPlusTree.getNodeRecPrototype().clone();
                 aie2rec.setValue(0, aie2.getMaxKey());
                 SQLInteger pageNumber2 = new SQLInteger();
                 pageNumber2.setValue(aie2.getPageNumber());
                 aie2rec.setValue(1, pageNumber2);
                 //pointer ohne +1?
-                this.indexPage.insert(pointer , aie2rec, true);
+                this.indexPage.insert(pointer+1, aie2rec, true);
                 this.insert(key, record);
             }
             else{
                 pageToIns.insert(key, record);
                 AbstractRecord oldMax = this.uniqueBPlusTree.getNodeRecPrototype().clone();
-                this.getIndexPage().read(pointer-1, oldMax);
+                this.getIndexPage().read(pointer, oldMax);
                 if(pageToIns.getMaxKey().compareTo(oldMax.getValue(0)) > 0){
                     oldMax.setValue(0, pageToIns.getMaxKey());
-                    this.indexPage.insert(pointer-1, oldMax, false);
+                    this.indexPage.insert(pointer, oldMax, false);
                 }
             }
         }

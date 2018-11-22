@@ -28,7 +28,7 @@ public class Leaf<T extends AbstractSQLValue> extends LeafBase<T>{
 	 */
 	@Override
 	public AbstractRecord lookup(T key) {
-		//TODO: implement this method
+		//find out if the key can even exist in the tree or is too big
         int pointer = this.binarySearch(key);
         if(pointer >= this.indexPage.getNumRecords()){
             return null;
