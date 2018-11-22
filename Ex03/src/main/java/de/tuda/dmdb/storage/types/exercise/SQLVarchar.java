@@ -7,7 +7,7 @@ import de.tuda.dmdb.storage.types.SQLVarcharBase;
  * @author cbinnig
  *
  */
-public class SQLVarchar extends SQLVarcharBase {	
+public class SQLVarchar extends SQLVarcharBase {
 
 	private static final long serialVersionUID = 1L;
 
@@ -19,7 +19,7 @@ public class SQLVarchar extends SQLVarcharBase {
 		super(maxLength);
 
 	}
-	
+
 	/**
 	 * Constructor with string value and max. length 
 	 * @param value
@@ -28,20 +28,20 @@ public class SQLVarchar extends SQLVarcharBase {
 	public SQLVarchar(String value, int maxLength){
 		super(value, maxLength);
 	}
-	
+
 	@Override
 	public byte[] serialize() {
-		//TODO: Insert your own implementation from exercise02
-
-		return null;
+		// self-explaining
+		return this.value.getBytes();
 	}
 
 	@Override
 	public void deserialize(byte[] data) {
-		//TODO: Insert your own implementation from exercise02
-
+		// The String constructor takes byte arrays, so no magic here
+		String decoded = new String(data);
+		this.value = decoded;
 	}
-	
+
 	@Override
 	public SQLVarchar clone(){
 		return new SQLVarchar(this.value, this.maxLength);
