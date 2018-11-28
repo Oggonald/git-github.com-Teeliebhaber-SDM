@@ -8,24 +8,34 @@ import de.tuda.dmdb.storage.AbstractRecord;
 
 @SuppressWarnings("unused")
 public class Projection extends ProjectionBase {
-	
-	public Projection(Operator child, Vector<Integer> attributes) {
-		super(child, attributes);
-	}
 
-	@Override
-	public void open() {
-		//TODO: implement this method
-	}
+    public Projection(Operator child, Vector<Integer> attributes) {
+        super(child, attributes);
+    }
 
-	@Override
-	public AbstractRecord next() {
-		//TODO: implement this method
-		return null;
-	}
+    @Override
+    public void open() {
+        this.getChild().open();
+        //TODO: implement this method
 
-	@Override
-	public void close() {
-		//TODO: implement this method
-	}
+    }
+
+    @Override
+    public AbstractRecord next() {
+        //TODO: implement this method
+        AbstractRecord record;
+        while ((record = this.getChild().next()) != null) {
+            record.keepValues(attributes);
+            
+            return record;
+        }
+
+        return null;
+    }
+
+    @Override
+    public void close() {
+        //TODO: implement this method
+        this.getChild().close();
+    }
 }
