@@ -180,3 +180,5 @@ gradle-app.setting
 **/build/
 
 # End of https://www.gitignore.io/api/java,macos,gradle,windows,intellij
+gradle-wrapper.jar
+gradle-wrapper.properties
