@@ -5,25 +5,43 @@ import de.tuda.dmdb.sql.operator.Operator;
 import de.tuda.dmdb.storage.AbstractRecord;
 
 public class EquiJoin extends EquiJoinBase {
-	
-	public EquiJoin(Operator leftChild, Operator rightChild, int leftAtt, int rightAtt) {
-		super(leftChild, rightChild, leftAtt, rightAtt);
-	}
-	
-	@Override
-	public void open() {
-		//TODO: implement this method
-	}
 
-	@Override
-	public AbstractRecord next() {
-		//TODO: implement this method
-		return null;
-	}
+    public EquiJoin(Operator leftChild, Operator rightChild, int leftAtt, int rightAtt) {
+        super(leftChild, rightChild, leftAtt, rightAtt);
+    }
 
-	@Override
-	public void close() {
-		//TODO: implement this method
-	}
+    @Override
+    public void open() {
+        //TODO: implement this method
+        this.getLeftChild().open();
+        this.leftRecord = this.getLeftChild().next();
+        this.getRightChild().open();
+    }
 
+    @Override
+    public AbstractRecord next() {
+        //TODO: implement this method
+        while (this.leftRecord != null) {
+            AbstractRecord rightRecord = this.getRightChild().next();
+            if (rightRecord != null) {
+                if (this.leftRecord.getValue(leftAtt).equals(rightRecord.getValue(rightAtt))) {
+                    AbstractRecord joined = this.leftRecord.clone();
+                    joined = joined.append(rightRecord);
+                    return joined;
+                }
+                continue;
+            }
+            this.leftRecord = this.getLeftChild().next();
+            this.getRightChild().close();
+            this.getRightChild().open();
+        }
+        return null;
+    }
+
+    @Override
+    public void close() {
+        //TODO: implement this method
+        this.getLeftChild().close();
+        this.getRightChild().close();
+    }
 }

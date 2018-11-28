@@ -56,6 +56,7 @@ public class TestSql extends TestCase{
 
 		for(AbstractRecord rec: selectStmt.getResultSet()){
 			System.out.println(rec);
+			
 		}
 
 		Assert.assertEquals(3, selectStmt.getResultSet().size());
