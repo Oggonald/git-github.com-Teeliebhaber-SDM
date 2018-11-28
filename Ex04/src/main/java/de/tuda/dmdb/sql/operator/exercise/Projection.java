@@ -16,17 +16,15 @@ public class Projection extends ProjectionBase {
     @Override
     public void open() {
         this.getChild().open();
-        //TODO: implement this method
 
     }
 
     @Override
     public AbstractRecord next() {
-        //TODO: implement this method
+
         AbstractRecord record;
-        while ((record = this.getChild().next()) != null) {
+        if ((record = this.getChild().next()) != null) {
             record.keepValues(attributes);
-            
             return record;
         }
 
@@ -35,7 +33,6 @@ public class Projection extends ProjectionBase {
 
     @Override
     public void close() {
-        //TODO: implement this method
         this.getChild().close();
     }
 }

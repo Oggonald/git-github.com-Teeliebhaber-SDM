@@ -17,13 +17,11 @@ public class Selection extends SelectionBase {
 
     @Override
     public void open() {
-        //TODO: implement this method
         this.getChild().open();
     }
 
     @Override
     public AbstractRecord next() {
-        //TODO: implement this method
         AbstractRecord record;
 
         while ((record = this.getChild().next()) != null) {
@@ -37,7 +35,6 @@ public class Selection extends SelectionBase {
 
     @Override
     public void close() {
-        //TODO: implement this method
         this.getChild().close();
     }
 }

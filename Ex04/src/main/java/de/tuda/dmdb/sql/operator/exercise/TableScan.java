@@ -14,17 +14,14 @@ public class TableScan extends TableScanBase {
     }
 
     @Override
+    @SuppressWarnings("unchecked Assignment")
     public void open() {
         this.tableIter = this.table.iterator();
-        //TODO: implement this method
     }
 
     @Override
     public AbstractRecord next() {
-        //TODO: implement this method
-
-        while (this.tableIter.hasNext()) {
-
+        if (this.tableIter.hasNext()) {
             return this.tableIter.next();
         }
 
@@ -33,7 +30,6 @@ public class TableScan extends TableScanBase {
 
     @Override
     public void close() {
-        //TODO: implement this method
         this.tableIter = null;
     }
 

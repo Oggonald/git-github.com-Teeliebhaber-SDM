@@ -12,7 +12,6 @@ public class EquiJoin extends EquiJoinBase {
 
     @Override
     public void open() {
-        //TODO: implement this method
         this.getLeftChild().open();
         this.leftRecord = this.getLeftChild().next();
         this.getRightChild().open();
@@ -20,7 +19,6 @@ public class EquiJoin extends EquiJoinBase {
 
     @Override
     public AbstractRecord next() {
-        //TODO: implement this method
         while (this.leftRecord != null) {
             AbstractRecord rightRecord = this.getRightChild().next();
             if (rightRecord != null) {
@@ -40,7 +38,6 @@ public class EquiJoin extends EquiJoinBase {
 
     @Override
     public void close() {
-        //TODO: implement this method
         this.getLeftChild().close();
         this.getRightChild().close();
     }
