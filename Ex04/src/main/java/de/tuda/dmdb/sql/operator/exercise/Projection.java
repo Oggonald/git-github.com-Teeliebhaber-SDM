@@ -15,16 +15,20 @@ public class Projection extends ProjectionBase {
 
     @Override
     public void open() {
+        // Initialize the operator
         this.getChild().open();
 
     }
 
     @Override
     public AbstractRecord next() {
-
+        // Create a new record
         AbstractRecord record;
+        // If the next record has a value, then proceed
         if ((record = this.getChild().next()) != null) {
+            // Keep only the values which we need
             record.keepValues(attributes);
+            // return the subset of attributes
             return record;
         }
 
@@ -33,6 +37,8 @@ public class Projection extends ProjectionBase {
 
     @Override
     public void close() {
+
+        // free the objects
         this.getChild().close();
     }
 }

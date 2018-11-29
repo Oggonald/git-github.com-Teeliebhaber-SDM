@@ -16,20 +16,23 @@ public class TableScan extends TableScanBase {
     @Override
     @SuppressWarnings("unchecked Assignment")
     public void open() {
+        // Get the iterator
         this.tableIter = this.table.iterator();
     }
 
     @Override
     public AbstractRecord next() {
+        // Return next element via the iterator if available
         if (this.tableIter.hasNext()) {
             return this.tableIter.next();
         }
-
+        // Otherwise return null
         return null;
     }
 
     @Override
     public void close() {
+        // Free the iterator object
         this.tableIter = null;
     }
 

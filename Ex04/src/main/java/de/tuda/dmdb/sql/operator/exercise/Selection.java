@@ -17,24 +17,27 @@ public class Selection extends SelectionBase {
 
     @Override
     public void open() {
+        // Initialize the Operator
         this.getChild().open();
     }
 
     @Override
     public AbstractRecord next() {
         AbstractRecord record;
-
+        //Check for the next Operator not equal null, in order iterate through
         while ((record = this.getChild().next()) != null) {
             if (record.getValue(attribute).equals(constant)) {
-
+                // Return the Record if it matches
                 return record;
             }
         }
+        // Otherwise return null
         return null;
     }
 
     @Override
     public void close() {
+        //Close everything again
         this.getChild().close();
     }
 }
